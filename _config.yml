@@ -1,6 +1,6 @@
 title: rksm2329 Blog
-subtitle: Hello!
-description: Welcome!
+subtitle: 'Hello!'
+description: 'Welcome!'
 keywords: null
 author: rksm2329
 language: zh-CN
@@ -62,9 +62,9 @@ theme: redefine
 deploy:
   type: ''
 mathjax:
-  tags: none
-  single_dollars: true
-  cjk_width: 0.9
-  normal_width: 0.6
-  append_css: true
-  every_page: false
+  tags: none               # or 'ams' or 'all'
+  single_dollars: true     # enable single dollar signs as in-line math delimiters
+  cjk_width: 0.9           # relative CJK char width
+  normal_width: 0.6        # relative normal (monospace) width
+  append_css: true         # add CSS to every page
+  every_page: false        # if true, every page will be rendered by mathjax regardless the `mathjax` setting in Front-matter of each article
