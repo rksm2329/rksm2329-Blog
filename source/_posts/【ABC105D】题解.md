@@ -1,11 +1,9 @@
 ---
 abbrlink: 【ABC105D】题解
-categories: []
-catgories: 芝士
+categories: 芝士
 date: '2024-02-17T00:12:41.921570+08:00'
 mathjax: true
-tag: 题解
-tags: []
+tags: 题解
 title: 【ABC105D】题解
 updated: '2024-02-17T00:12:41.927+08:00'
 ---
