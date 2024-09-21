@@ -1,10 +1,10 @@
 ---
 abbrlink: atcoder-abc-372-e
 categories: []
-date: '2024-09-21T23:01:06.548331+08:00'
+date: '2024-09-21T23:28:44.113762+08:00'
 tags: []
 title: 题解：K-th Largest Connected Components
-updated: '2024-09-21T23:06:57.187+08:00'
+updated: '2024-09-21T23:29:24.580+08:00'
 ---
 # 题意
 
