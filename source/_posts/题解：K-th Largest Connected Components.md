@@ -5,6 +5,7 @@ date: '2024-09-21T23:28:44.113762+08:00'
 tags: []
 title: 题解：K-th Largest Connected Components
 updated: '2024-09-21T23:29:24.580+08:00'
+mathjax: true
 ---
 # 题意
 

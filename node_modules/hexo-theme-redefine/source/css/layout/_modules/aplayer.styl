@@ -2,10 +2,10 @@ $aplayer-height = 66px
 $lrc-height = 30px
 $aplayer-height-lrc= $aplayer-height + $lrc-height - 6
 
-@import '../../common/variables'
+@require '../../common/variables'
 
 .aplayer {
-  font-family Arial, Helvetica, sans-serif
+  //font-family Arial, Helvetica, sans-serif
   margin 5px
   border-radius $redefine-border-radius-medium
   overflow hidden
@@ -252,13 +252,6 @@ $aplayer-height-lrc= $aplayer-height + $lrc-height - 6
   .aplayer-icon-forward,
   .aplayer-icon-lrc {
     display none
-  }
-
-  .aplayer-icon-lrc {
-    pointer-events none
-    svg {
-      opacity 0.4
-    }
   }
 
   .aplayer-icon-lrc-inactivity {

@@ -1,4 +1,4 @@
-@import '../common/variables'
+@require '../common/variables'
 
 .home-sidebar-container
   width 240px
@@ -77,6 +77,9 @@
         color var(--second-text-color)
         font-family 'Chillax-Variable', sans-serif
         text-align center
+        if hexo-config('global.fonts.title.enable') {
+          font-family hexo-config('global.fonts.title.family')
+        }
 
       .announcement
         font-size 0.9rem
@@ -97,7 +100,7 @@
       font-family $default-font-family
 
       .link-name
-        font-weight 450
+        font-weight 500
 
       .icon-space
         margin-right 5px

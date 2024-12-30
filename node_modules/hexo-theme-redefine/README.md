@@ -4,16 +4,15 @@
   <a title="zh-TW" href="README_zh-TW.md"><img src="https://img.shields.io/badge/-%E7%B9%81%E4%BD%93%E4%B8%AD%E6%96%87-545759?style=for-the-badge" alt="繁体中文"></a>
 </div>
 
-<a href="https://redefine.ohevan.com"><img align="center" src="https://user-images.githubusercontent.com/68590232/226141917-68124e8f-fde0-4edd-b86d-c62932ec369a.png"  alt="Redefine"></a>
+<a href="https://redefine.ohevan.com"><img align="center" src="https://github.com/EvanNotFound/hexo-theme-redefine/assets/68590232/f2ff10f6-a740-4120-ba04-1b2a518fb019"  alt="Redefine"></a>
 
 
 
 # hexo-theme-redefine
 
-"Redefine" hexo theme is a blend of **simplicity, speed, and purity**, yet it makes **no compromises** on functionality or design. Loaded with widely utilized features and polished web design, it seamlessly marries practicality with aesthetics.
+Hexo-theme-Redefine reimagines simplicity, speed, and purity, without sacrificing functionality or design. Its sleek, modern aesthetic is packed with useful features, blending style and practicality seamlessly.
 
-Drawing its core from [hexo-theme-keep](https://github.com/XPoet/hexo-theme-keep), this theme elevates the foundation by enhancing the style and integrating valuable writing modules and plugins. The theme encourages personalization, offering extensive customizability to mold various facets to your liking, making your blogging journey truly unique and user-friendly.
-
+Building on the solid foundation of hexo-theme-keep, "Redefine" elevates the style and incorporates valuable writing tools and plugins. It offers extensive customization options, allowing you to tailor every detail to your preferences. With Redefine, your blogging experience becomes unique and effortless, showcasing your personal style and needs.
 
 <p align="center">
     <a href="https://www.npmjs.com/package/hexo-theme-redefine">
@@ -100,10 +99,11 @@ To update hexo-theme-redefine, you can run the same **npm** command
 $ npm install hexo-theme-redefine@latest
 ```
 
-Another method is by **git clone**
+If you installed the theme by **git clone**, you can update the theme by running the following command
 
 ```sh
-$ git clone https://github.com/EvanNotFound/hexo-theme-redefine.git themes/redefine
+$ cd themes/redefine
+$ git pull
 ```
 
 
@@ -134,10 +134,10 @@ If you like this theme, please give a star. You can also support me by [donating
 
 This is the list of all the people who have donated to me: [Donation List](https://github.com/EvanNotFound/hexo-theme-redefine/blob/dev/DONATION.md)
 
+如果你想要使用OpenAI GPT-4，但不想每月支付 20 美元吗，来看看我的 [GPT Plus Share](https://gpt.oknice.ca) GPT Plus 共享站，使用多达 100 个 ChatGPT Plus 账户，每月仅 17 人民币起步！
 
-Want to use OpenAI GPT-4 but don't want to pay $20 per month? Check out [GPT Plus Tokens](https://gpt.oknice.ca)! You can use up to 100 ChatGPT Plus Accounts!
 
-![CleanShot 2023-12-08 at 12 47 20@2x](https://github.com/EvanNotFound/hexo-theme-redefine/assets/68590232/b25196a1-3ba4-43bb-9d0f-e23d3527e6ff)
+[![GPT Billboard](https://github.com/EvanNotFound/hexo-theme-redefine/assets/68590232/55346629-cd54-45a4-9b31-3f979750b0c0)](https://gpt.oknice.ca)
 
 ## 🌟 Star History
 
