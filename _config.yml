@@ -58,12 +58,12 @@ pagination_dir: page
 include: null
 exclude: null
 ignore: null
-theme: argon
+theme: redefine
 deploy:
   type: ''
-#mathjax:
-#  enable: true
-#  per_page: false
+mathjax:
+  enable: true
+  per_page: false
 search:
   path: search.xml
   field: post
