@@ -6,11 +6,11 @@
     <content><![CDATA[题意给定一个序列，求这个序列所有的循环移位中的  最大值。
 思路发现题解区还没有基于势能分析法的做法，发一个。
 推式子题。对于一个序列  而言。
-它的一个循环移位 $A{t} = A{k + 1}, A_{k + 2}, \dots, A_n, A_1, \dots, A_k，对于1 \le i \le n - k$，有：
-
-\text{mex} ([{A_{t}}_1, {A_t}_2, \dots, {A_t}_i]) = \min (\text{mex} ([A_1, A_2, \dots, A_{i + k}]), \min \limits_{1 \le j \le k} A_j)而对于 ，我们发现多余的部分到了前面，所以：
-
-\text{mex} ([{A_t}_1, {A_t}_2, \dots, {A_t}_i]) = \min (\text{mex} ([A_1, A_2, \dots, A_n]), \min \limits_{i + k - n + 1 \le j \le k} A_j)上述答案可以尝试使用数据结构维护。但是，我们发现线段树没有方法直接求区间取 、区间求和。但是，如果我们尝试分析暴力区间修改的时间复杂度，会发现：如果我们记录区间最大值、次大值、最大值的个数以及区间和，如果当前需要取  的数 ，那么无需操作；如果 ，那么这个区间就有  个数需要取 ；否则直接递归操作。这样，时间复杂度为 ，其中  为操作次数。
+它的一个循环移位 ，对于 ，有：
+$$\text{mex} ([{A_{t}}_1, {A_t}2, \dots, {A_t}i]) = \min (\text{mex} ([A_1, A_2, \dots, A{i + k}]), \min \limits{1 \le j \le k} A_j)$$
+而对于 ，我们发现多余的部分到了前面，所以：
+$$\text{mex} ([{A_t}_1, {A_t}_2, \dots, {A_t}i]) = \min (\text{mex} ([A_1, A_2, \dots, A_n]), \min \limits{i + k - n + 1 \le j \le k} A_j)$$
+上述答案可以尝试使用数据结构维护。但是，我们发现线段树没有方法直接求区间取 、区间求和。但是，如果我们尝试分析暴力区间修改的时间复杂度，会发现：如果我们记录区间最大值、次大值、最大值的个数以及区间和，如果当前需要取  的数 ，那么无需操作；如果 ，那么这个区间就有  个数需要取 ；否则直接递归操作。这样，时间复杂度为 ，其中  为操作次数。
 注意：不能使用 set 求初始答案，这样会超时。可以利用排列的性质， 地求。
 #include &lt;bits/stdc++.h&gt;using namespace std;using ll = long long;const int MAXN = 1e6 + 10, INF = 2e9;int n, a[MAXN], ans[MAXN];struct Node {  ll sum, mx, cmx, cnt;};struct Tag {  int val;  bool operator==(const Tag &amp;oth) const {    return val == oth.val;  }};struct SegTree {  Node dat[MAXN &lt;&lt; 2], E = {0, 0, 0, 0};  Tag tag[MAXN &lt;&lt; 2], I = {INF};  Node comb(const Node &amp;dat1, const Node &amp;dat2) {    Node res = E;    res.sum = dat1.sum + dat2.sum;    if (dat1.mx &gt; dat2.mx) {      res.mx = dat1.mx;      res.cmx = max(dat2.mx, dat1.cmx);      res.cnt = dat1.cnt;    } else if (dat1.mx &lt; dat2.mx) {      res.mx = dat2.mx;      res.cmx = max(dat1.mx, dat2.cmx);      res.cnt = dat2.cnt;    } else {      res.mx = dat1.mx;      res.cmx = max(dat1.cmx, dat2.cmx);      res.cnt = dat1.cnt + dat2.cnt;    }    return res;  }  Tag F(const Tag &amp;tag1, const Tag &amp;tag2) {    return {min(tag1.val, tag2.val)};  }  Node f(const Node &amp;dat, const Tag &amp;tag) {    if (dat.mx &lt;= tag.val) return dat;    return {dat.sum + (tag.val - dat.mx) * dat.cnt, tag.val, dat.cmx, dat.cnt};  }  void down(int root) {    if (tag[root] == I) return;    tag[root &lt;&lt; 1] = F(tag[root &lt;&lt; 1], tag[root]);    tag[root &lt;&lt; 1 | 1] = F(tag[root &lt;&lt; 1 | 1], tag[root]);    dat[root &lt;&lt; 1] = f(dat[root &lt;&lt; 1], tag[root]);    dat[root &lt;&lt; 1 | 1] = f(dat[root &lt;&lt; 1 | 1], tag[root]);    tag[root] = I;  }  void build(int root, int l, int r, bool f) {    tag[root] = I;    if (l == r) {      if (f) {        dat[root] = {INF, INF, -1, 1};      } else {        dat[root] = {ans[l], ans[l], -1, 1};      }      return;    }    int mid = l + r &gt;&gt; 1;    build(root &lt;&lt; 1, l, mid, f);    build(root &lt;&lt; 1 | 1, mid + 1, r, f);    dat[root] = comb(dat[root &lt;&lt; 1], dat[root &lt;&lt; 1 | 1]);  }  void modify(int root, int l, int r, int L, int R, Tag t) {    if (L &gt; R || dat[root].mx &lt;= t.val) return;    if (L &lt;= l &amp;&amp; R &gt;= r &amp;&amp; dat[root].cmx &lt; t.val) {      dat[root] = f(dat[root], t);      tag[root] = F(tag[root], t);      return;    }    down(root);    int mid = l + r &gt;&gt; 1;    if (L &lt;= mid) modify(root &lt;&lt; 1, l, mid, L, R, t);    if (R &gt; mid) modify(root &lt;&lt; 1 | 1, mid + 1, r, L, R, t);    dat[root] = comb(dat[root &lt;&lt; 1], dat[root &lt;&lt; 1 | 1]);  }  Node query(int root, int l, int r, int L, int R) {    if (L &lt;= l &amp;&amp; R &gt;= r) return dat[root];    if (L &gt; r || R &lt; l) return E;    down(root);    int mid = l + r &gt;&gt; 1;    return comb(query(root &lt;&lt; 1, l, mid, L, R), query(root &lt;&lt; 1 | 1, mid + 1, r, L, R));  }} T1, T2;void Solve() {  cin &gt;&gt; n;  for (int i = 1; i &lt;= n; i++) {    cin &gt;&gt; a[i];  }  int mi = INF;  ans[n] = n;  for (int i = n - 1; i &gt;= 1; i--) {    mi = min(mi, a[i + 1]);    ans[i] = mi;  }  T1.build(1, 1, n, 0);  T2.build(1, 1, n, 1);  ll res = T1.query(1, 1, n, 1, n).sum;  mi = INF;  for (int i = 1; i &lt; n; i++) {    T1.modify(1, 1, n, i + 1, n, {a[i]});    if (i == 1) {      T2.modify(1, 1, n, i, i, {n});    } else {      T2.modify(1, 1, n, 2, i, {a[i]});    }    res = max(res, T1.query(1, 1, n, i + 1, n).sum + T2.query(1, 1, n, 1, i).sum);  }  cout &lt;&lt; res &lt;&lt; '\n';}int main() {  ios::sync_with_stdio(0), cin.tie(0);  int T;  for (cin &gt;&gt; T; T--; Solve());  return 0;}]]></content>
       <categories>
@@ -25,15 +25,15 @@
     <url>/2025/10/28/P2260-%E6%B8%85%E5%8D%8E%E9%9B%86%E8%AE%AD-2012-%E6%A8%A1%E7%A7%AF%E5%92%8C-%E9%A2%98%E8%A7%A3/</url>
     <content><![CDATA[纪念自己磕出的第一道紫题。
 题意给定 ，求出：
-
-\sum _ {i = 1} ^ n \sum _ {i = 1} ^ m (n \bmod i) \times (m \bmod j)，i \ne j思路没有 ，一切都好说。将式子拆开，直接数论分块求解即可。
+，
+思路没有 ，一切都好说。将式子拆开，直接数论分块求解即可。
 但是多了这么一个条件。于是，我们考虑容斥。先计算出不包含  的答案 ，再减去  的答案。
 现在需要解决的问题是，如何求解  时的答案。发现，当  时，答案是 0，没有用。所以，我们只需做到  即可。
 将式子写下来：
 化为可用数论分块解决的形式：
 拆开：
 其中， 可以直接得到， 可用数论分块计算，我们将其答案记为 ， 是个问题。
-回顾数论分块的思想，将一个数分为根号个块，求解带有向下取整的问题。出现了两个数向下取整，但是我们仍然可以将其分为 2 倍根号个块，进行计算。每次将  变为 ，总共操作 2 倍根号次，将答案记为 $ans3。平方和如何计算？由前缀平方和公式：\sum  {i = 1} ^ n i ^ 2 = \frac {n (2n + 1) (n + 1)} 6$
+回顾数论分块的思想，将一个数分为根号个块，求解带有向下取整的问题。出现了两个数向下取整，但是我们仍然可以将其分为 2 倍根号个块，进行计算。每次将  变为 ，总共操作 2 倍根号次，将答案记为 。平方和如何计算？由前缀平方和公式：
 将和拆分为  分别求解即可。
 不要忘了加上 。最后，答案为 。
 代码#include &lt;bits/extc++.h&gt;using namespace std;using ll = long long;using i128 = __int128;namespace io {	const int __SIZE = (1 &lt;&lt; 21) + 1;	char ibuf[__SIZE], *iS, *iT, obuf[__SIZE], *oS = obuf, *oT = oS + __SIZE - 1, __c, qu[55]; int __f, qr, _eof;	#define Gc() (iS == iT ? (iT = (iS = ibuf) + fread (ibuf, 1, __SIZE, stdin), (iS == iT ? EOF : *iS ++)) : *iS ++)	inline void flush () { fwrite (obuf, 1, oS - obuf, stdout), oS = obuf; }	inline void gc (char &amp;x) { x = Gc(); }	inline void pc (char x) { *oS ++ = x; if (oS == oT) flush (); }	inline void pstr (const char *s) { int __len = strlen(s); for (__f = 0; __f &lt; __len; ++__f) pc (s[__f]); }	inline void gstr (char *s) { for (__c = Gc(); __c &lt; 32 || __c &gt; 126 || __c == ' ';)  __c = Gc();		for (; __c &gt; 31 &amp;&amp; __c &lt; 127 &amp;&amp; __c != ' ' &amp;&amp; __c != '\n' &amp;&amp; __c != '\r'; ++s, __c = Gc()) *s = __c; *s = 0; }	template &lt;class I&gt; inline bool gi (I &amp;x) { _eof = 0;		for (__f = 1, __c = Gc(); (__c &lt; '0' || __c &gt; '9') &amp;&amp; !_eof; __c = Gc()) { if (__c == '-') __f = -1; _eof |= __c == EOF; }		for (x = 0; __c &lt;= '9' &amp;&amp; __c &gt;= '0' &amp;&amp; !_eof; __c = Gc()) x = x * 10 + (__c &amp; 15), _eof |= __c == EOF; x *= __f; return !_eof; }	template &lt;class I&gt; inline void print (I x) { if (!x) pc ('0'); if (x &lt; 0) pc ('-'), x = -x;		while (x) qu[++ qr] = x % 10 + '0', x /= 10; while (qr) pc (qu[qr --]); }	struct Flusher_ {~Flusher_(){flush();}}io_flusher_;} using io::pc; using io::gc; using io::pstr; using io::gstr; using io::gi; using io::print;const int MOD = 19940417;i128 n, m;i128 Calc(i128 x) {  return x * (x * 2 + 1) * (x + 1) / 6;}int main() {  gi(n), gi(m);  i128 ans1 = n * n, ans2 = m * m, ans3 = 0, ans4 = 0, ans5 = 0;  for (ll l = 1, r; l &lt;= n; l = r + 1) {    r = min(n, n / (n / l));    ans1 -= (l + r) * (r - l + 1) / 2 * (n / l);  }  for (ll l = 1, r; l &lt;= m; l = r + 1) {    r = min(m, m / (m / l));    ans2 -= (l + r) * (r - l + 1) / 2 * (m / l);  }  for (ll l = 1, r; l &lt;= min(n, m); l = r + 1) {    r = min(n / (n / l), m / (m / l));    ans3 += (Calc(r) - Calc(l - 1)) * (n / l) * (m / l);  }  for (i128 l = 1, r; l &lt;= min(n, m); l = r + 1) {    r = min(min(n, m), m / (m / l));    ans4 += (l + r) * (r - l + 1) / 2 * (m / l);  }  ans4 *= n;  for (i128 l = 1, r; l &lt;= min(n, m); l = r + 1) {    r = min(min(n, m), n / (n / l));    ans5 += (l + r) * (r - l + 1) / 2 * (n / l);  }  ans5 *= m;  ll ans = (ans1 * ans2 - m * n * min(m, n) + ans4 + ans5 - ans3) % MOD;  print(ans);  return 0;}]]></content>
@@ -55,7 +55,7 @@
 除法在除法竖式中，是每一位除以除数，然后拿余数接上后面那个数再来除以除数。
 但是，高精除高精里，没办法逐位相除，就可以一直减，减到没有就停下，然后记录次数。
 取模差点忘了。。。
-取模就是被除数 - 被除数 / 除数 * 除数。
+取模就是被除数 - 被除数 &#x2F; 除数 * 除数。
 压位你在想什么？压位？不可能！
 
 所以现在你已经知道了怎么实现，可以开始写了。
@@ -86,6 +86,7 @@
 堆的根结点⼜被称为堆顶，⼩根堆的堆顶元素是堆中最⼩的元素，大根堆就反着来。
 存储因为它是完全二叉树，所以可以直接用数组存储：
 int heap[MAXN], len;
+
 基本操作一个容器，最先要考虑的是增、删、改、查四个操作。
 当对堆进行上面的操作的时候，可能会破坏堆的性质，也可能让堆不是完全二叉树，要考虑如何处理。
 可以用两种操作来维护堆的性质：上浮、下沉，仅适用于小根堆，大根堆两个操作相反。
@@ -95,19 +96,26 @@ int heap[MAXN], len;
 否则，停止操作。
 
 实现void up(int x) { // 上浮  for (int i = x, j = i / 2; j &gt;= 1 &amp;&amp; heap[i] &lt; heap[j]; i = j, j = i / 2) {    swap(heap[i], heap[j]);  }}
+
 下沉当修改了堆中的某个元素的时候，如果这个元素变大了：
 
 如果这个结点有儿子结点，并且值比较小的儿子更大，那么交换当前结点与较小的儿子结点的值，继续执行操作
 
 实现int son(int x) { // 返回较小的儿子  int i = x * 2, j = x * 2 + 1;  return i + (j &lt;= n &amp;&amp; heap[i] &gt; heap[j]);}void down(int x) { // 下沉  for (int i = x, j = son(i); j &lt;= n &amp;&amp; heap[i] &gt; heap[j]; i = j, j = son(i)) {    swap(heap[i], heap[j]);  }}
+
 查询最值int top() { // 查询最值  return heap[1]; // 小根堆则为最小值，大根堆则为最大值}
+
 插入元素可以在堆的尾部增加一个结点，保证堆仍然是一棵完全二叉树，然后上浮。
 void push(int x) {  heap[++n] = x;  up(n);}
+
 删除最值如果直接删除堆顶，会使堆分裂为两个堆，⽽删除堆尾元素不需要维护。可以将堆顶和堆尾元素进⾏交换，然后删除堆尾元素，保证堆仍然是⼀棵完全⼆叉树。 如果交换后的堆顶不满⾜堆的性质，就下沉。
 void pop() {  swap(heap[1], heap[n--]);  down(1);}
+
 priority_queuepriority_queue，即优先队列，就是 C++ 已经弄好的堆，比赛时常用这个容器代替堆。
 头文件#include &lt;queue&gt;
+
 定义#include &lt;queue&gt;#include &lt;vector&gt;#include &lt;functional&gt;// 需要 3 个参数：Typename数据类型名，Container底层容器，Compare比较器// 底层容器和比较器为可选参数// 不指定底层容器和比较器时，默认为 vector&lt;Typename&gt; 和 less&lt;Typename&gt;（也就是大根堆）priority_queue&lt;Typename, [Container], [Compare])&gt; q;// 大根堆priority_queue&lt;int&gt; q1;// 定义了一个类型为 int，底层容器为 vector&lt;int&gt;，比较器为 less&lt;int&gt; 的优先队列// 小根堆priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; q2;// 定义了一个类型为 int，底层容器为 vector&lt;int&gt;，比较器为 greater&lt;int&gt; 的优先队列// 需要引入头文件 &lt;functional&gt;// less 中文为较小的，但实际上是大数靠前的比较器，greater 为较大的，实际上是小数靠前的比较器。
+
 成员函数 为堆内元素个数。
 
 top() 访问堆顶，
@@ -119,14 +127,22 @@ pop() 弹出堆顶，
 
 自定义比较器对于结构体类型，我们需要定义其⽐较规则才能⽤优先队列维护该类型元素。
 struct Node {	int x, id;};
+
 方法 1：定义比较器函数对象struct cmp {	bool operator()(const Node &amp;i, const Node &amp;j) const { // 函数尾的 const 表示该函数不能对所在类的成员进⾏修改		return i.x &lt; j.x;	}};priority_queue&lt;Node, vector&lt;Node&gt;, cmp&gt; pq; // 定义了⼀个 x 为关键字的⼤根堆
+
 方法 2：重载运算符bool operator&lt;(const Node &amp;i, const Node &amp;j) {	return i.x &gt; j.x;}priority_queue&lt;Node&gt; pq; // 定义了⼀个 x 为关键字的⼩根堆
+
 struct Node {  int x, id;  bool operator &lt; (const Node &amp;i) const {	  return x &gt; i.x;  }};priority_queue&lt;Node&gt; pq; // 定义了⼀个 x 为关键字的⼩根堆
+
 方法 3：使⽤ lambda 表达式（需要 C++11 及以上标准）auto cmp = [](const Node &amp;i, const Node &amp;j) {	return i.x &lt; j.x;};priority_queue&lt;Node, vector&lt;Node&gt;, decltype(cmp)) pq; // x 为关键字的⼤根堆
+
 例子struct cmp{  bool operator()(int i, int j) {    return i &gt; j;  }};priority_queue&lt;int&gt; pq1; // ⼤根堆priority_queue&lt;int, vector&lt;int&gt;, cmp&gt; pq2; // 小根堆pq1.push(1);pq1.push(2);cout &lt;&lt; pq1.top() &lt;&lt; '\n'; // 2pq1.pop();cout &lt;&lt; pq1.top() &lt;&lt; '\n'; // 1pq2.push(1);pq2.push(2);cout &lt;&lt; pq2.top() &lt;&lt; '\n'; // 1pq2.pop();cout &lt;&lt; pq2.top() &lt;&lt; '\n'; // 2
+
 结构体struct Student {	int a, b, c; // 三科的成绩};struct cmp {  bool operator()(const Student &amp;i, const Student &amp;j) {    if (i.a != j.a) {      return i.a &lt; j.a;    }    if (i.b != j.b) {      return i.b &lt; j.b;    }    return i.c &lt; j.c;  }};priority_queue&lt;Student, vector&lt;Student&gt;, cmp&gt; pq; // 按语数外从⾼到低排int main() {  ios::sync_with_stdio(0);  cin.tie(0), cout.tie(0);  pq.push({100, 100, 90});  pq.push({100, 100, 100});  pq.push({100, 90, 100});  pq.push({90, 100, 100});  while (!pq.empty()) {    Student x = pq.top();    pq.pop();    cout &lt;&lt; x.a &lt;&lt; ' ' &lt;&lt; x.b &lt;&lt; ' ' &lt;&lt; x.c &lt;&lt; '\n';  }  return 0;}
+
 例题P1090 [NOIP2004 提高组] 合并果子贪⼼，每次选出数⽬最⼩的两堆进⾏合并即可。暴⼒模拟是 ，可以⽤优先队列优化⾄ 。如果把合并过程建树，那么题⽬所要求的的答案就是 ， 为数⽬， 为 在树中的深度，显然  ⼤的叶⼦结点  ⼩的两堆进⾏合并。尽可能⼩，因此每次选出数⽬最⼩的两堆进⾏合并。
 #include &lt;bits/stdc++.h&gt;using namespace std;int n, x;priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;int main() {  cin &gt;&gt; n;  for (int i = 1; i &lt;= n; i++) {    cin &gt;&gt; x;    pq.push(x);  }  int ans = 0;  while (pq.size() != 1) {    int x = pq.top();    pq.pop();    int y = pq.top();    pq.pop();    ans += x + y;    pq.push(x + y);  }  cout &lt;&lt; ans;  return 0;}
+
 P1631 序列合并堆优化。
 如果暴⼒记录所有和，再加上排序，时间复杂度⾼达 。
 我们可以先对  个和进⾏分组：
@@ -138,9 +154,11 @@ P1631 序列合并堆优化。
 由于题⽬给出的序列  和  都是单调不减的，我们发现每组内的  个和也都是单调不减的。可以暴⼒⽤  个指针维护每⼀组的最⼩值，每次取⼀个最⼩值 ，总时间 。
 设计状态【和，和所属的组，和在所属组中是第⼏个】。⼀开始先将每组的最⼩和的状态存储在堆中。每次取出堆中的最⼩和后，将该组的后⼀个和压⼊到堆中。执⾏ 次这样的操作，最⼩的  个和就得到了。总时间 。为了⽅便实现，使⽤结构体表示状态，使⽤ priority_queue 代替堆。
 #include &lt;bits/stdc++.h&gt;using namespace std;const int MAXN = 1e5 + 10;struct node {  int sum, i, j;  bool operator&lt;(const node &amp;j) const {    return sum &gt; j.sum;  }};int n, a[MAXN], b[MAXN];priority_queue&lt;node&gt; pq;int main() {  cin &gt;&gt; n;  for (int i = 1; i &lt;= n; i++) {    cin &gt;&gt; a[i];  }  for (int i = 1; i &lt;= n; i++) {    cin &gt;&gt; b[i];  }  for (int i = 1; i &lt;= n; i++) {    pq.push({a[i] + b[1], i, 1});  }  for (int i = 1; i &lt;= n; i++) {    cout &lt;&lt; pq.top().sum &lt;&lt; ' ';    node now = pq.top();    pq.pop();    pq.push({a[now.i] + b[now.j + 1], now.i, now.j + 1});  }  return 0;}
+
 P4053 [JSOI2007] 建筑抢修这个题状态有两个属性【修理时⻓，截⽌时刻】，可以先对截⽌时刻排序（相当于是给所有建筑定义了⼀个优先级，截⽌时间越早的肯定越要先完成）。
 按排序后的顺序模拟修理建筑，并记录修理总时⻓。反例如下：
 3100 1002 1013 102按此贪⼼只能修第 1 个建筑，实际能修第 2、3 个 建筑
+
 如果总时⻓不超过当前建筑的截⽌时刻，那就把当前建筑加⼊到修理计划当中；
 否则，说明必然有⼀个建筑是不能修理的，为了让后⾯的建筑修理有更多的时间，我们应该不去修理前⾯所有建筑中时⻓最⻓的那⼀个。
 可以⽤堆来存储所有修理建筑的时⻓，加⼊修理计划——堆中插⼊元素，移除时⻓最⻓的建筑——删除堆中最⼤值。
@@ -152,14 +170,18 @@ P4053 [JSOI2007] 建筑抢修这个题状态有两个属性【修理时⻓，截
     <url>/2025/09/22/hello-world/</url>
     <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
 Quick StartCreate a new post$ hexo new "My New Post"
+
 More info: Writing
 Run server$ hexo server
+
 More info: Server
 Generate static files$ hexo generate
+
 More info: Generating
 Deploy to remote sites$ hexo deploy
+
 More info: Deployment
-$dpi = dp{i - 1} + a_i$
+
 ]]></content>
   </entry>
   <entry>
@@ -168,7 +190,7 @@ $dpi = dp{i - 1} + a_i$
     <content><![CDATA[题解题意简述
 给定  个数，求这  个数中有多少个二元组  满足其中每一个数都是  的倍数。
 
-思路前缀和， 内每一个数 ，可以用 $(sumy - sum{x - 1}) \bmod \ m = 0$ 表示。但是这题数据太大，所以要使用 map。
+思路前缀和， 内每一个数 ，可以用  表示。但是这题数据太大，所以要使用 map。
 如果 ，那么 ，所以要先给  赋值为 
 AC Code#include&lt;bits/stdc++.h&gt;using namespace std;int n, m, x;map&lt;long long, int&gt; cnt;long long sum, ans;int main(){  cin &gt;&gt; n &gt;&gt; m;  cnt[0] = 1;  for (int i = 1; i &lt;= n; i++){    cin &gt;&gt; x;    sum += x;    ans += cnt[sum % m];    cnt[sum % m]++;  }  cout &lt;&lt; ans;  return 0;}
 ]]></content>

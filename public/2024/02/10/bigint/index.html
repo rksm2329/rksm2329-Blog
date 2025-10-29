@@ -664,7 +664,7 @@
 <h2 id="除法"><a href="#除法" class="headerlink" title="除法"></a>除法</h2><p>在除法竖式中，是每一位除以除数，然后拿余数接上后面那个数再来除以除数。</p>
 <p>但是，高精除高精里，没办法逐位相除，就可以一直减，减到没有就停下，然后记录次数。</p>
 <h2 id="取模"><a href="#取模" class="headerlink" title="取模"></a>取模</h2><p>差点忘了。。。</p>
-<p>取模就是被除数 - 被除数 / 除数 * 除数。</p>
+<p>取模就是被除数 - 被除数 &#x2F; 除数 * 除数。</p>
 <h2 id="压位"><a href="#压位" class="headerlink" title="压位"></a>压位</h2><p>你在想什么？压位？不可能！</p>
 <hr>
 <p>所以现在你已经知道了怎么实现，可以开始写了。</p>
@@ -753,32 +753,44 @@
 
         
             
-    <div id="waline"></div>
-    <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
-
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://rksm2329-waline-talk.vercel.app/',
-          dark: 'body[class~="dark-mode"]',
-          reaction: false,
-          requiredMeta: ['nick', 'mail'],
-          emoji: [],
-                    lang: 'zh-CN',
-          recaptchaV3Key: 'wasd',
-        });
-      }
-
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        async function loadGiscus() {
+            const giscusConfig = {
+                'src': 'https://giscus.app/client.js',
+                'data-repo': 'rksm2329/rksm2329-Blog',
+                'data-repo-id': 'R_kgDOLLAMfA',
+                'data-category': 'Announcements',
+                'data-category-id': 'DIC_kwDOLLAMfM4CczRN',
+                'data-mapping': 'pathname',
+                'data-strict': '0',
+                'data-reactions-enabled': '1',
+                'data-emit-metadata': '1',
+                'data-theme': 'preferred_color_scheme',
+                'data-lang': 'zh-CN',
+                'data-input-position': 'top',
+                'data-loading': 'lazy',
+                'crossorigin': 'anonymous',
+                'async': true
+            }
+            const giscusScript = document.createElement('script');
+            for (const key in giscusConfig) {
+                giscusScript.setAttribute(key, giscusConfig[key]);
+            }
+            document.getElementById('giscus-container').appendChild(giscusScript);
+        }
+        if ('true') {
+            let loadGiscusTimeout = setTimeout(() => {
+                loadGiscus();
+                clearTimeout(loadGiscusTimeout);
+            }, 1000);
+        } else {
+            document.addEventListener('DOMContentLoaded', loadGiscus);
+        }
     </script>
 
 
-
+        
         
     
 </div>
