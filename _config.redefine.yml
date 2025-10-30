@@ -48,14 +48,14 @@ global:
   fonts:
     # Chinese fonts
     chinese: 
-      enable: false # Whether to enable custom chinese fonts
-      family:  # Font family
-      url:  # Font URL to CSS file
+      enable: true # Whether to enable custom chinese fonts
+      family: "Noto Sans SC" # Font family
+      url: ttps://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap # Font URL to CSS file
     # English fonts
     english: 
-      enable: false # Whether to enable custom english fonts
-      family:  # Font family
-      url:  # Font URL to CSS file
+      enable: true # Whether to enable custom english fonts
+      family: "Farsan" # Font family
+      url: https://fonts.googleapis.com/css2?family=Farsan&display=swap # Font URL to CSS file
   # Content max width
   content_max_width: 1000px
   # Sidebar width
